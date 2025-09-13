@@ -1,0 +1,193 @@
+@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.MeetingNotification
+@{
+    ViewData["Title"] = "Chỉnh sửa Thông báo họp lớp";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">@ViewData["Title"]</h4>
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home", new { Area = "Admin" })">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "ClassAnnouncement", new { Area = "Admin" })">Thông báo họp lớp</a></li>
+                    <li class="breadcrumb-item active">Chỉnh sửa</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["EmailWarningMessage"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @TempData["EmailWarningMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Chỉnh sửa thông báo</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="Edit" asp-route-id="@Model.MeetingId" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="MeetingId" />
+            <input type="hidden" asp-for="CreatedBy" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="FacultyId" class="form-label">Khoa/Viện</label>
+                    <select asp-for="FacultyId" class="form-select" asp-items="ViewBag.Faculties" id="facultySelect">
+                        <option value="">-- Chọn Khoa/Viện --</option>
+                    </select>
+                    <span asp-validation-for="FacultyId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ClassId" class="form-label">Lớp</label>
+                    <select asp-for="ClassId" class="form-select" asp-items="ViewBag.Classes" id="classSelect">
+                        <option value="">-- Chọn Lớp --</option>
+                    </select>
+                    <span asp-validation-for="ClassId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AcademicYearId" class="form-label">Năm học</label>
+                    <select asp-for="AcademicYearId" class="form-select" asp-items="ViewBag.AcademicYears" id="academicYearSelect">
+                        <option value="">-- Chọn Năm học --</option>
+                    </select>
+                    <span asp-validation-for="AcademicYearId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SemesterId" class="form-label">Học kỳ</label>
+                    <select asp-for="SemesterId" class="form-select" asp-items="ViewBag.Semesters" id="semesterSelect">
+                        <option value="">-- Chọn Học kỳ --</option>
+                    </select>
+                    <span asp-validation-for="SemesterId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="MeetingDate" class="form-label">Ngày họp</label>
+                    <input asp-for="MeetingDate" type="date" class="form-control" value="@Model.MeetingDate.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="MeetingDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="MeetingTime" class="form-label">Thời gian họp</label>
+                    <input asp-for="MeetingTime" type="time" class="form-control" />
+                    <span asp-validation-for="MeetingTime" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Location" class="form-label">Địa điểm họp</label>
+                    <input asp-for="Location" class="form-control" />
+                    <span asp-validation-for="Location" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Note" class="form-label">Nội dung/Ghi chú</label>
+                <textarea asp-for="Note" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Lưu thay đổi và Gửi lại thông báo</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            function updateSelectWithOptions(selectElement, data, valueField, textField, defaultOptionText, selectedValue) {
+                selectElement.empty();
+                selectElement.append($('<option/>', { value: '', text: defaultOptionText }));
+                $.each(data, function (index, item) {
+                    var option = $('<option/>', {
+                        value: item[valueField],
+                        text: item[textField]
+                    });
+                    if (item[valueField] == selectedValue) {
+                        option.prop('selected', true);
+                    }
+                    selectElement.append(option);
+                });
+            }
+
+            var initialFacultyId = '@Model.FacultyId';
+            var initialClassId = '@Model.ClassId';
+            var initialAcademicYearId = '@Model.AcademicYearId';
+            var initialSemesterId = '@Model.SemesterId';
+
+            $('#facultySelect').change(function () {
+                var facultyId = $(this).val();
+                var classSelect = $('#classSelect');
+                if (facultyId) {
+                    $.ajax({
+                        url: '@Url.Action("GetClassesByFaculty", "ClassAnnouncement")',
+                        type: 'GET',
+                        data: { facultyId: facultyId },
+                        success: function (data) {
+                            // Preserve selection if it's the initial load and matches current faculty
+                            var selectedClass = (facultyId == initialFacultyId) ? initialClassId : '';
+                            updateSelectWithOptions(classSelect, data, 'classId', 'className', '-- Chọn Lớp --', selectedClass);
+                        },
+                        error: function () { alert('Lỗi khi tải danh sách lớp.'); }
+                    });
+                } else {
+                     updateSelectWithOptions(classSelect, [], '', '', '-- Chọn Lớp --', '');
+                }
+            });
+
+            $('#academicYearSelect').change(function () {
+                var academicYearId = $(this).val();
+                var semesterSelect = $('#semesterSelect');
+                if (academicYearId) {
+                    $.ajax({
+                        url: '@Url.Action("GetSemestersByAcademicYear", "ClassAnnouncement")',
+                        type: 'GET',
+                        data: { academicYearId: academicYearId },
+                        success: function (data) {
+                            var selectedSemester = (academicYearId == initialAcademicYearId) ? initialSemesterId : '';
+                            updateSelectWithOptions(semesterSelect, data, 'semesterId', 'semesterName', '-- Chọn Học kỳ --', selectedSemester);
+                        },
+                        error: function () { alert('Lỗi khi tải danh sách học kỳ.'); }
+                    });
+                } else {
+                    updateSelectWithOptions(semesterSelect, [], '', '', '-- Chọn Học kỳ --', '');
+                }
+            });
+
+            if (initialFacultyId) {
+                $('#facultySelect').val(initialFacultyId).trigger('change');
+            }
+             if (initialAcademicYearId) {
+                $('#academicYearSelect').val(initialAcademicYearId).trigger('change');
+            }
+        });
+    </script>
+}

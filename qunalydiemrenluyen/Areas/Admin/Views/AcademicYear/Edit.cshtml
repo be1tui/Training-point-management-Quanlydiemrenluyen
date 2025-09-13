@@ -1,0 +1,40 @@
+﻿@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.AcademicYear
+
+@{
+    ViewData["Title"] = "Chỉnh sửa năm học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-pencil"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post" autocomplete="off">
+                <input type="hidden" asp-for="AcademicYearId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="YearName" class="form-label">Tên năm học</label>
+                    <input asp-for="YearName" class="form-control" maxlength="20" placeholder="VD: 2024 - 2025" />
+                    <span asp-validation-for="YearName" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-start">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="mdi mdi-content-save"></i> Lưu thay đổi
+                    </button>
+                    <a asp-area="Admin" asp-controller="AcademicYear" asp-action="Index" class="btn btn-secondary">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

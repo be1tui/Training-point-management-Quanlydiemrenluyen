@@ -1,0 +1,331 @@
+﻿@using QUANLYDIEMRENLUYEN.Utilities
+@using QUANLYDIEMRENLUYEN.Models
+@inject DataContext _context
+
+@{
+    // Lấy AccountId từ session
+    int accountId = QUANLYDIEMRENLUYEN.Utilities.Functions.AccountId;
+    // Lấy tối đa 5 thông báo mới nhất cho sinh viên hiện tại
+    var notifications = _context.Notifications
+        .Where(n => n.AccountId == null || n.AccountId == accountId)
+        .OrderByDescending(n => n.CreatedAt)
+        .Take(5)
+        .ToList();
+    int unreadCount = notifications.Count(n => !n.IsRead);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Dashboard - NiceAdmin Bootstrap Template</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="@Url.Content("~/assets/img/favicon.png")" rel="icon">
+  <link href="@Url.Content("~/assets/img/apple-touch-icon.png")" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="@Url.Content("~/assets/vendor/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/bootstrap-icons/bootstrap-icons.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/boxicons/css/boxicons.min.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/quill/quill.snow.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/quill/quill.bubble.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/remixicon/remixicon.css")" rel="stylesheet">
+  <link href="@Url.Content("~/assets/vendor/simple-datatables/style.css")" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="@Url.Content("~/assets/css/style.css")" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.4.1
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="@Url.Content("~/assets/img/logo.png")" alt="">
+        <span class="d-none d-lg-block">Điểm Rèn Luyện</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar -->
+
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+
+        <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon-->
+
+        <li class="nav-item dropdown">
+
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-bell"></i>
+                <span class="badge bg-primary badge-number">@unreadCount</span>
+            </a><!-- End Notification Icon -->
+
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+                <li class="dropdown-header">
+                    Bạn có @unreadCount thông báo mới
+                    <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">Xem tất cả</span></a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                @if (notifications.Any())
+                {
+                    foreach (var notify in notifications)
+                    {
+                        <li class="notification-item">
+                            <i class="bi bi-info-circle text-primary"></i>
+                            <div>
+                                <h4>@notify.Title</h4>
+                                <p>@notify.Message</p>
+                                <p>@notify.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="notification-item">
+                        <div>
+                            <p>Không có thông báo mới</p>
+                        </div>
+                    </li>
+                }
+                <li class="dropdown-footer">
+                    <a href="#">Xem tất cả thông báo</a>
+                </li>
+            </ul><!-- End Notification Dropdown Items -->
+
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+
+            <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+                <i class="bi bi-chat-left-text"></i>
+                @{
+                    // Đếm số tin nhắn chưa đọc cho lớp trưởng
+                    int msgCount = 0;
+                    var classMonitorMessages = new List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Notification>();
+                    if (QUANLYDIEMRENLUYEN.Utilities.Functions.Role == "Classmonitor")
+                    {
+                        classMonitorMessages = _context.Notifications
+                            .Where(n => n.AccountId == QUANLYDIEMRENLUYEN.Utilities.Functions.AccountId && n.Title == "Yêu cầu đánh giá lại bảng điểm rèn luyện")
+                            .OrderByDescending(n => n.CreatedAt)
+                            .Take(5)
+                            .ToList();
+                        msgCount = classMonitorMessages.Count(n => !n.IsRead);
+                    }
+                }
+                <span class="badge bg-success badge-number">@msgCount</span>
+            </a><!-- End Messages Icon -->
+
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+                <li class="dropdown-header">
+                    Bạn có @msgCount tin nhắn mới
+                    <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">Xem tất cả</span></a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                @if (classMonitorMessages.Any())
+                {
+                    foreach (var msg in classMonitorMessages)
+                    {
+                        <li class="message-item">
+                            <a href="#">
+                                <img src="@(msg.Account != null && !string.IsNullOrEmpty(msg.Account.Avatar) 
+                                    ? Url.Content(msg.Account.Avatar) 
+                                    : Url.Content("~/assets/img/avatar-default.jpg"))" 
+                                    alt="" class="rounded-circle">
+                                <div>
+                                    <h4>@msg.Title</h4>
+                                    <p>@msg.Message</p>
+                                    <p>@msg.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="message-item">
+                        <div>
+                            <p>Không có tin nhắn mới</p>
+                        </div>
+                    </li>
+                }
+
+                <li class="dropdown-footer">
+                    <a href="#">Xem tất cả tin nhắn</a>
+                </li>
+            </ul><!-- End Messages Dropdown Items -->
+
+        </li><!-- End Messages Nav -->
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="@Functions.Avatar" alt="Profile" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">@Functions.FullName</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>@Functions.FullName</h6>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index", "ProfileUser")">
+                <i class="bi bi-person"></i>
+                <span>Hồ sơ của tôi</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Index", "Login", new { area = "Admin" })">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Đăng xuất</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+  </header><!-- End Header -->
+
+  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+
+      <li class="nav-item">
+        <a class="nav-link " href="@Url.Action("Index", "Home")">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i><span>Điểm Rèn Luyện</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          @if (QUANLYDIEMRENLUYEN.Utilities.Functions.Role == "Classmonitor")
+          { 
+              <li>
+                  <a href="@Url.Action("Index", "ClassEvaluate")">
+                      <i class="bi bi-circle"></i><span>Xem danh sách phiếu nộp</span>
+                  </a>
+              </li>
+          }
+          <li>
+            <a href="@Url.Action("Index", "Evaluate")">
+              <i class="bi bi-circle"></i><span>Tự đánh giá</span>
+            </a>
+          </li>
+          <li>
+            <a href="@Url.Action("Index", "EvaluationSummary")">
+              <i class="bi bi-circle"></i><span>Xem điểm rèn luyện</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Components Nav -->
+      @if (QUANLYDIEMRENLUYEN.Utilities.Functions.Role == "Classmonitor")
+      {
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-journal-text"></i><span>Điểm danh</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="@Url.Action("Index", "Attendance")">
+              <i class="bi bi-circle"></i><span>Điểm danh họp lớp</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Forms Nav -->
+      }
+    </ul>
+
+  </aside><!-- End Sidebar-->
+
+  <main id="main" class="main">
+    @RenderBody()
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>NiceAdmin</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="@Url.Content("~/assets/vendor/apexcharts/apexcharts.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/bootstrap/js/bootstrap.bundle.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/chart.js/chart.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/echarts/echarts.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/quill/quill.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/simple-datatables/simple-datatables.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/tinymce/tinymce.min.js")"></script>
+  <script src="@Url.Content("~/assets/vendor/php-email-form/validate.js")"></script>
+
+  <!-- Template Main JS File -->
+  <script src="@Url.Content("~/assets/js/main.js")"></script>
+  @RenderSection("Scripts", required: false)
+</body>
+
+</html>

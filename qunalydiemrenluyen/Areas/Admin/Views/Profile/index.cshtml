@@ -1,0 +1,176 @@
+@model QUANLYDIEMRENLUYEN.Models.Account
+@using QUANLYDIEMRENLUYEN.Utilities
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    var avatar = string.IsNullOrEmpty(Model.Avatar) ? Functions.AvatarDefault() : Model.Avatar;
+    var canEdit = Model.Role == "Admin" || Model.Role == "Lecturer";
+    var avatarCacheBuster = DateTime.Now.Ticks; 
+}
+
+<div class="row">
+    <div class="col-md-4 text-center">
+        <div class="mt-3 mb-2 position-relative">
+            @if (canEdit)
+            {
+                <form asp-action="ChangeAvatar" asp-controller="Profile" asp-area="Admin" method="post" enctype="multipart/form-data" class="mb-3" id="avatarForm">
+                    <input type="file" id="avatarInput" name="avatarFile" accept="image/*" class="d-none" onchange="document.getElementById('avatarForm').submit();" />
+                    <label for="avatarInput" style="cursor:pointer;">
+                        <img src="@($"{avatar}?v={avatarCacheBuster}")" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 2px solid #ccc;" title="Nhấn để đổi ảnh đại diện" />
+                        <span style="position:absolute;bottom:10px;right:10px;background:#fff;border-radius:50%;padding:4px;">
+                            <i class="bi bi-camera"></i>
+                        </span>
+                    </label>
+                </form>
+            }
+            else
+            {
+                <img src="@($"{avatar}?v={avatarCacheBuster}")" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 2px solid #ccc;" />
+            }
+        </div>
+        <h4 class="mt-3">@Model.FullName</h4>
+        <div class="text-muted">@Model.Role</div>
+    </div>
+    <div class="col-md-8">
+        <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="true">
+                    Thông tin Tài khoản
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="false">
+                    Thông tin cá nhân
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="profileTabContent">
+            <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                <div class="card">
+                    <div class="card-header">
+                        @* <h5 class="mb-0">Thông tin cá nhân</h5> *@
+                    </div>
+                    <div class="card-body">
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success">@TempData["Success"]</div>
+                        }
+                        <form asp-action="Edit" asp-controller="Profile" asp-area="Admin" method="post" id="profileForm">
+                            <input type="hidden" asp-for="AccountId" />
+                            <div class="mb-2">
+                                <label class="form-label">Tài khoản:</label>
+                                <input asp-for="Username" class="form-control" readonly />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Họ tên:</label>
+                                @if (canEdit)
+                                {
+                                    <input asp-for="FullName" class="form-control" />
+                                }
+                                else
+                                {
+                                    <input asp-for="FullName" class="form-control" readonly="readonly" />
+                                }
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Email:</label>
+                                @if (canEdit)
+                                {
+                                    <input asp-for="Email" class="form-control" />
+                                }
+                                else
+                                {
+                                    <input asp-for="Email" class="form-control" readonly="readonly" />
+                                }
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Quyền:</label>
+                                <input asp-for="Role" class="form-control" readonly />
+                            </div>
+                            @if (canEdit)
+                            {
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary mt-2">Lưu thay đổi</button>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="general" role="tabpanel" aria-labelledby="general-tab">
+                <div class="card">
+                    <div class="card-header">
+                        @* <h5 class="mb-0">Thông tin chung</h5> *@
+                    </div>
+                    <div class="card-body">
+                        @{
+                            var profile = ViewBag.Profile as QUANLYDIEMRENLUYEN.Areas.Admin.Models.AccountProfile;
+                            var isAdmin = Model.Role == "Admin";
+                        }
+                        <form asp-action="EditProfile" asp-controller="Profile" asp-area="Admin" method="post" id="profileGeneralForm">
+                            <input type="hidden" name="ProfileId" value="@profile?.ProfileId" />
+                            <div class="mb-2">
+                                <label class="form-label">Ngày sinh:</label>
+                                <input type="date" name="DateOfBirth" class="form-control" value="@profile?.DateOfBirth?.ToString("yyyy-MM-dd")" @(canEdit ? "" : "readonly") />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Giới tính:</label>
+                                @if (canEdit)
+                                {
+                                    <select class="form-select" name="Gender">
+                                        <option value="" selected="@(string.IsNullOrEmpty(profile?.Gender))">-- Chọn giới tính --</option>
+                                        <option value="Nam" selected="@(profile?.Gender == "Nam")">Nam</option>
+                                        <option value="Nữ" selected="@(profile?.Gender == "Nữ")">Nữ</option>
+                                        <option value="Khác" selected="@(profile?.Gender == "Khác")">Khác</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <input type="text" class="form-control" value="@profile?.Gender" readonly />
+                                }
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Số điện thoại:</label>
+                                <input type="text" name="PhoneNumber" class="form-control" value="@profile?.PhoneNumber" @(isAdmin ? "" : "readonly") />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Địa chỉ:</label>
+                                <input type="text" name="Address" class="form-control" value="@profile?.Address" @(canEdit ? "" : "readonly") />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">CMND/CCCD:</label>
+                                <input type="text" name="NationalID" class="form-control" value="@profile?.NationalID" readonly />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Quốc tịch:</label>
+                                <input type="text" name="Nationality" class="form-control" value="@profile?.Nationality" @(canEdit ? "" : "readonly") />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Dân tộc:</label>
+                                <input type="text" name="Ethnicity" class="form-control" value="@profile?.Ethnicity" @(canEdit ? "" : "readonly") />
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label">Tôn giáo:</label>
+                                <input type="text" name="Religion" class="form-control" value="@profile?.Religion" @(canEdit ? "" : "readonly") />
+                            </div>
+                            @if (canEdit)
+                            {
+                                <div class="text-end">
+                                    <button type="submit" class="btn btn-primary mt-2">Lưu thay đổi</button>
+                                </div>
+                            }
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,75 @@
+@model List<QUANLYDIEMRENLUYEN.Models.Account>
+@{
+    ViewBag.Title = "Danh sách sinh viên";
+    var faculties = ViewBag.Faculties as List<QUANLYDIEMRENLUYEN.Models.Faculty>;
+    var classes = ViewBag.Classes as List<QUANLYDIEMRENLUYEN.Models.Class>;
+    int? selectedFaculty = ViewBag.SelectedFaculty;
+    int? selectedClass = ViewBag.SelectedClass;
+    string search = ViewBag.Search as string;
+}
+
+<h2>Danh sách sinh viên</h2>
+<form method="get" class="row g-3 mb-3">
+    <div class="col-md-3">
+        <select name="facultyId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Chọn khoa --</option>
+            @foreach (var f in faculties)
+            {
+                if (selectedFaculty == f.FacultyId)
+                {
+                    <option value="@f.FacultyId" selected>@f.FacultyName</option>
+                }
+                else
+                {
+                    <option value="@f.FacultyId">@f.FacultyName</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="classId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Chọn lớp --</option>
+            @foreach (var c in classes)
+            {
+                if (selectedClass == c.ClassId)
+                {
+                    <option value="@c.ClassId" selected>@c.ClassName</option>
+                }
+                else
+                {
+                    <option value="@c.ClassId">@c.ClassName</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input type="text" name="search" value="@search" class="form-control" placeholder="Tìm kiếm sinh viên..." />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Lớp</th>
+            <th>Khoa</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sv in Model)
+        {
+            <tr>
+                <td>@sv.Username</td>
+                <td>@sv.FullName</td>
+                <td>@sv.Email</td>
+                <td>@sv.Class?.ClassName</td>
+                <td>@sv.Faculty?.FacultyName</td>
+            </tr>
+        }
+    </tbody>
+</table>

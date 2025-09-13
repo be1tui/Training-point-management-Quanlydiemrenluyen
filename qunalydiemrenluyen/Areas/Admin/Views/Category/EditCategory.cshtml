@@ -1,0 +1,18 @@
+@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.CriteriaCategory
+
+<h3>Sửa danh mục lớn</h3>
+<form asp-action="EditCategory" method="post">
+    <input type="hidden" asp-for="CategoryId" />
+    <div class="form-group">
+        <label>Tên danh mục</label>
+        <input asp-for="CategoryName" class="form-control" />
+        <span asp-validation-for="CategoryName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Điểm tối đa</label>
+        <input asp-for="MaxScore" class="form-control" />
+        <span asp-validation-for="MaxScore" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

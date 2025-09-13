@@ -1,0 +1,35 @@
+﻿@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester
+
+@{
+    ViewData["Title"] = "Chi tiết học kỳ";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-information-outline"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h5 class="mb-4 text-primary">Thông tin học kỳ</h5>
+
+            <dl class="row">
+                <dt class="col-sm-3">Tên học kỳ</dt>
+                <dd class="col-sm-9">@Model.SemesterName</dd>
+
+                <dt class="col-sm-3">Năm học</dt>
+                <dd class="col-sm-9">@Model.AcademicYear?.YearName</dd>
+            </dl>
+
+            <div class="mt-4">
+                <a asp-action="Edit" asp-route-id="@Model?.SemesterId" class="btn btn-warning me-2">
+                    <i class="mdi mdi-pencil"></i> Chỉnh sửa
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="mdi mdi-arrow-left"></i> Quay lại danh sách
+                </a>
+            </div>
+        </div>
+    </div>
+</main>

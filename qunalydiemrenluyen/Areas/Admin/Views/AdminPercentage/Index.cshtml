@@ -1,0 +1,143 @@
+@{
+    ViewBag.Title = "Xem tỉ lệ % đánh giá rèn luyện";
+    var total = (int)ViewBag.Total;
+    var xuatSac = (int)ViewBag.CountXuatSac;
+    var gioi = (int)ViewBag.CountGioi;
+    var kha = (int)ViewBag.CountKha;
+    var trungBinh = (int)ViewBag.CountTrungBinh;
+    var yeu = (int)ViewBag.CountYeu;
+
+    var selectedFacultyId = Context.Request.Query["facultyId"].ToString();
+    var selectedClassId = Context.Request.Query["classId"].ToString();
+    var selectedAcademicYearId = Context.Request.Query["academicYearId"].ToString();
+    var selectedSemesterId = Context.Request.Query["semesterId"].ToString();
+}
+<h2>Xem tỉ lệ % đánh giá rèn luyện</h2>
+<a href="@Url.Action("Index", "LecturerEvaluate", new { area = "Admin" })" class="btn btn-secondary float-right mb-2">
+    Quay lại phần phê duyệt
+</a>
+<form method="get" class="row">
+    <div class="col">
+        <select name="facultyId" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Chọn Khoa --</option>
+            @foreach (var f in ViewBag.Faculties)
+            {
+                <option value="@f.FacultyId" selected="@(selectedFacultyId == f.FacultyId.ToString() ? "selected" : null)">@f.FacultyName</option>
+            }
+        </select>
+    </div>
+    <div class="col">
+        <select name="classId" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Chọn Lớp --</option>
+            @foreach (var c in ViewBag.Classes)
+            {
+                <option value="@c.ClassId" selected="@(selectedClassId == c.ClassId.ToString() ? "selected" : null)">@c.ClassName</option>
+            }
+        </select>
+    </div>
+    <div class="col">
+        <select name="academicYearId" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Chọn Năm học --</option>
+            @foreach (var y in ViewBag.AcademicYears)
+            {
+                <option value="@y.AcademicYearId" selected="@(selectedAcademicYearId == y.AcademicYearId.ToString() ? "selected" : null)">@y.YearName</option>
+            }
+        </select>
+    </div>
+    <div class="col">
+        <select name="semesterId" class="form-control" onchange="this.form.submit()">
+            <option value="">-- Chọn Học kỳ --</option>
+            @foreach (var s in ViewBag.Semesters)
+            {
+                <option value="@s.SemesterId" selected="@(selectedSemesterId == s.SemesterId.ToString() ? "selected" : null)">@s.SemesterName</option>
+            }
+        </select>
+    </div>
+</form>
+
+@if (total > 0)
+{
+    <div class="card">
+        <div class="card-body">
+            <div class="d-sm-flex flex-wrap">
+                <h4 class="card-title mb-4">Tỉ lệ đánh giá rèn luyện</h4>
+            </div>
+            <div style="width:100%;max-width:500px;margin:auto;">
+                <canvas id="barChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var dataArr = [@xuatSac, @gioi, @kha, @trungBinh, @yeu];
+        var total = dataArr.reduce((a, b) => a + b, 0);
+        var labels = ['Xuất sắc', 'Giỏi', 'Khá', 'Trung bình', 'Yếu'];
+        var colors = ['#4caf50', '#2196f3', '#ffc107', '#ff9800', '#f44336'];
+
+        var ctx = document.getElementById('barChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Số lượng',
+                    data: dataArr,
+                    backgroundColor: colors,
+                    borderRadius: 8,
+                    maxBarThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let value = context.parsed.y;
+                                let percent = total > 0 ? Math.round(value * 100 / total) : 0;
+                                return context.label + ': ' + value + ' (' + percent + '%)';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    </script>
+    <div class="mt-3">
+        <b>Tổng số phiếu: @total</b>
+        <ul>
+            <li>Xuất sắc: @xuatSac (@(xuatSac * 100 / total)%)</li>
+            <li>Giỏi: @gioi (@(gioi * 100 / total)%)</li>
+            <li>Khá: @kha (@(kha * 100 / total)%)</li>
+            <li>Trung bình: @trungBinh (@(trungBinh * 100 / total)%)</li>
+            <li>Yếu: @yeu (@(yeu * 100 / total)%)</li>
+        </ul>
+    </div>
+    <hr />
+    <form method="post" asp-action="SendNotify">
+        <input type="hidden" name="classId" value="@selectedClassId" />
+        <div class="mb-2">
+            <label>Gửi thông báo cho lớp trưởng:</label>
+            <textarea name="message" class="form-control" rows="2" required placeholder="Nhập nội dung thông báo"></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger">Gửi thông báo</button>
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success mt-2">@TempData["Message"]</div>
+        }
+    </form>
+}
+else
+{
+    <div class="alert alert-warning">Chưa có dữ liệu đánh giá phù hợp bộ lọc.</div>
+}

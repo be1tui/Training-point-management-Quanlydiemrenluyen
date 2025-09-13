@@ -1,0 +1,23 @@
+@model List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Attendance>
+@{
+    ViewBag.Title = "Danh sách buổi điểm danh";
+}
+<h2>@ViewBag.Title</h2>
+<table class="table">
+    <tr>
+        <th>STT</th>
+        <th>Ngày họp</th>
+        <th>Hành động</th>
+    </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <tr>
+            <td>@(i+1)</td>
+            <td>@Model[i].SessionDate.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>
+                <a href="@Url.Action("List", "Attendance", new { attendanceId = Model[i].AttendanceId })">Xem DS điểm danh</a>
+            </td>
+        </tr>
+    }
+</table>
+<a href="@Url.Action("ShowQR", "Attendance")" class="btn btn-primary">Tạo mã QR điểm danh mới</a>

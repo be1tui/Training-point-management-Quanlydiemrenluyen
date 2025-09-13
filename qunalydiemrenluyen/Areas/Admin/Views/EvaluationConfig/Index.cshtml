@@ -1,0 +1,89 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.EvaluationConfig>
+
+@{
+    ViewData["Title"] = "Cấu hình thời gian đánh giá";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+            <h4 class="mb-sm-0 font-size-18">@ViewData["Title"]</h4>
+
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>
+    <a asp-action="CreateConfig" class="btn btn-primary waves-effect waves-light">
+        <i class="bx bx-plus-medical me-1"></i> Tạo cấu hình mới
+    </a>
+</p>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">Danh sách cấu hình</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered dt-responsive nowrap w-100">
+                <thead>
+                    <tr>
+                        <th>Năm học</th>
+                        <th>Học kỳ</th>
+                        <th>Bắt đầu SV tự đánh giá</th>
+                        <th>Kết thúc SV tự đánh giá</th>
+                        <th>Bắt đầu GV đánh giá</th>
+                        <th>Kết thúc GV đánh giá</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Semester.AcademicYear.YearName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Semester.SemesterName)</td>
+                            <td>@item.SelfEvalStart?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.SelfEvalEnd?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.LecturerEvalStart?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@item.LecturerEvalEnd?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <a asp-action="EditConfig" asp-route-id="@item.ConfigId" class="btn btn-sm btn-success waves-effect waves-light"><i class="bx bx-edit me-1"></i> Sửa</a> |
+                                <button type="button" class="btn btn-sm btn-danger waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#deleteModal_@item.ConfigId">
+                                    <i class="bx bx-trash me-1"></i> Xóa
+                                </button>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModal_@item.ConfigId" tabindex="-1" aria-labelledby="deleteModalLabel_@item.ConfigId" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel_@item.ConfigId">Xác nhận xóa</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Bạn có chắc chắn muốn xóa cấu hình cho học kỳ @item.Semester.SemesterName - @item.Semester.AcademicYear.YearName không?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                <form asp-action="DeleteConfig" asp-route-id="@item.ConfigId" method="post" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger">Xóa</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

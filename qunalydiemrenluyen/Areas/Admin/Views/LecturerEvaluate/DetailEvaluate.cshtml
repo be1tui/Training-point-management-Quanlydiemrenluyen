@@ -1,0 +1,66 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.EvaluationDetail>
+@{
+    var evaluation = ViewBag.Evaluation as QUANLYDIEMRENLUYEN.Areas.Admin.Models.StudentEvaluation;
+    var evidences = ViewBag.Evidences as List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Evidence>;
+    int stt = 1;
+    Layout = "/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int totalClassMonitorScore = Model.Sum(d => d.ClassMonitorScore ?? 0);
+}
+<h2>Duyệt điểm rèn luyện cho: @evaluation?.Account?.FullName</h2>
+<form asp-action="Approve" method="post">
+    <input type="hidden" name="evaluationId" value="@evaluation?.EvaluationId" />
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>TT</th>
+                <th>Nội dung đánh giá</th>
+                <th>Điểm SV</th>
+                <th>Điểm lớp</th>
+                <th>Minh chứng</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var detail in Model)
+        {
+            <tr>
+                <td>@(stt++)</td>
+                <td>@detail.Criteria?.CriteriaName</td>
+                <td>@detail.StudentScore</td>
+                <td>@detail.ClassMonitorScore</td>
+                <td>
+                    @{
+                        var evidenceList = evidences?.Where(e => e.CriteriaId == detail.CriteriaId).ToList();
+                        if (evidenceList != null && evidenceList.Any())
+                        {
+                            foreach (var ev in evidenceList)
+                            {
+                                <a href="@Url.Content(ev.FilePath)" target="_blank">Xem minh chứng</a><br />
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="text-end"><strong>Tổng điểm lớp</strong></td>
+                <td colspan="2"><strong>@totalClassMonitorScore</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    <div class="mb-3">
+        <label for="lecturerNote">Ghi chú (nếu có):</label>
+        <textarea name="lecturerNote" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Duyệt điểm</button>
+</form>
+<form asp-action="Reject" method="post" class="mt-2">
+    <input type="hidden" name="evaluationId" value="@evaluation?.EvaluationId" />
+    <div class="mb-3">
+        <label for="note">Lý do từ chối:</label>
+        <textarea name="note" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-danger">Từ chối</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

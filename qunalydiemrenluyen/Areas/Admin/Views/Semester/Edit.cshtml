@@ -1,0 +1,46 @@
+﻿@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester
+
+@{
+    ViewData["Title"] = "Chỉnh sửa học kỳ";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-pencil"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="SemesterId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="SemesterName" class="form-label">Tên học kỳ</label>
+                    <input asp-for="SemesterName" class="form-control" maxlength="20" placeholder="VD: Học kỳ I" />
+                    <span asp-validation-for="SemesterName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Năm học</label>
+                    <select asp-for="AcademicYearId" class="form-select" asp-items="ViewBag.AcademicYears"></select>
+                    <span asp-validation-for="AcademicYearId" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="mdi mdi-content-save"></i> Lưu thay đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

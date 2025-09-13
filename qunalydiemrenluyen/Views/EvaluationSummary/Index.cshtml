@@ -1,0 +1,151 @@
+@{
+    ViewData["Title"] = "Tổng điểm rèn luyện theo năm và học kỳ";
+    var grouped = ViewBag.GroupedSummaries as IEnumerable<dynamic>;
+    var years = grouped != null
+        ? grouped.Select(g => (string)g.AcademicYear).Distinct().ToList()
+        : new List<string>();
+}
+<h2>@ViewData["Title"]</h2>
+
+@if (grouped != null && grouped.Any())
+{
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>Năm học:</label>
+            <select id="yearSelect" class="form-control">
+                <option value="">-- Chọn năm học --</option>
+                @foreach (var year in years)
+                {
+                    <option value="@year">@year</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Học kỳ:</label>
+            <select id="semesterSelect" class="form-control" disabled>
+                <option value="">-- Chọn học kỳ --</option>
+            </select>
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button id="btnViewDetail" class="btn btn-primary" disabled>Xem điểm chi tiết</button>
+            <button id="btnViewSummary" class="btn btn-success" disabled>Xem tổng kết</button>
+        </div>
+    </div>
+
+    <div id="resultArea"></div>
+
+    <script>
+        var groupedData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(grouped));
+
+        document.getElementById('yearSelect').addEventListener('change', function () {
+            var year = this.value;
+            var semesterSelect = document.getElementById('semesterSelect');
+            semesterSelect.innerHTML = '<option value="">-- Chọn học kỳ --</option>';
+            semesterSelect.disabled = true;
+            document.getElementById('btnViewDetail').disabled = true;
+            document.getElementById('btnViewSummary').disabled = !year;
+            document.getElementById('resultArea').innerHTML = '';
+
+            if (year) {
+                var group = groupedData.find(g => g.AcademicYear === year);
+                if (group) {
+                    group.Semesters.forEach(function (sem) {
+                        var opt = document.createElement('option');
+                        opt.value = sem.SemesterName;
+                        opt.text = sem.SemesterName;
+                        semesterSelect.appendChild(opt);
+                    });
+                    semesterSelect.disabled = false;
+                }
+            }
+        });
+
+        document.getElementById('semesterSelect').addEventListener('change', function () {
+            var semester = this.value;
+            document.getElementById('btnViewDetail').disabled = !semester;
+            document.getElementById('resultArea').innerHTML = '';
+        });
+
+        document.getElementById('btnViewDetail').addEventListener('click', function () {
+            var year = document.getElementById('yearSelect').value;
+            var semester = document.getElementById('semesterSelect').value;
+            var resultArea = document.getElementById('resultArea');
+            resultArea.innerHTML = '';
+
+            if (year && semester) {
+                var group = groupedData.find(g => g.AcademicYear === year);
+                if (group) {
+                    var sem = group.Semesters.find(s => s.SemesterName === semester);
+                    if (sem) {
+                        resultArea.innerHTML = `
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Học kỳ</th>
+                                        <th>Tổng điểm</th>
+                                        <th>Xếp loại</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${sem.SemesterName}</td>
+                                        <td>${sem.TotalScore}</td>
+                                        <td>${sem.Rank ?? ''}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        `;
+                    }
+                }
+            }
+        });
+
+        document.getElementById('btnViewSummary').addEventListener('click', function () {
+            var year = document.getElementById('yearSelect').value;
+            var resultArea = document.getElementById('resultArea');
+            resultArea.innerHTML = '';
+
+            if (year) {
+                var group = groupedData.find(g => g.AcademicYear === year);
+                if (group) {
+                    var rows = '';
+                    group.Semesters.forEach(function (sem) {
+                        rows += `
+                            <tr>
+                                <td>${sem.SemesterName}</td>
+                                <td>${sem.TotalScore}</td>
+                                <td>${sem.Rank ?? ''}</td>
+                            </tr>
+                        `;
+                    });
+                    rows += `
+                        <tr style="font-weight:bold;">
+                            <td>Tổng điểm năm</td>
+                            <td>${group.TotalYearScore}</td>
+                            <td>${group.YearRank ?? ''}</td>
+                            <td></td>
+                        </tr>
+                    `;
+                    resultArea.innerHTML = `
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Học kỳ</th>
+                                    <th>Tổng điểm</th>
+                                    <th>Xếp loại</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rows}
+                            </tbody>
+                        </table>
+                    `;
+                }
+            }
+        });
+    </script>
+}
+else
+{
+    <div class="alert alert-info">Chưa có dữ liệu tổng kết điểm rèn luyện.</div>
+}

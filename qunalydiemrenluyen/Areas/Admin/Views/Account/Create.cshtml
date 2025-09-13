@@ -1,0 +1,82 @@
+﻿@model QUANLYDIEMRENLUYEN.Models.Account
+
+@{
+    ViewData["Title"] = "Tạo tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4 class="fw-bold">Tạo tài khoản</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form method="post" asp-action="Create">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Username" class="form-label">Tên đăng nhập</label>
+                        <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập" />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Nhập email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="FullName" class="form-label">Họ và tên</label>
+                        <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên" />
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Password" class="form-label">Mật khẩu</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Role" class="form-label">Vai trò</label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="">-- Chọn vai trò --</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Lecturer">Chủ nhiệm khoa</option>
+                            <option value="Classmonitor">Lớp trưởng</option>
+                            <option value="Student">Sinh viên</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="IsActive" class="form-label">Trạng thái</label>
+                        <select asp-for="IsActive" class="form-select">
+                            <option value="True">Kích hoạt</option>
+                            <option value="False">Không kích hoạt</option>
+                        </select>
+                        <span asp-validation-for="IsActive" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ClassId" class="form-label">Lớp</label>
+                        <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
+                            <option value="">-- Không chọn lớp --</option>
+                        </select>
+                        <span asp-validation-for="ClassId" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-controller="Account" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-account-plus"></i> Thêm mới
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

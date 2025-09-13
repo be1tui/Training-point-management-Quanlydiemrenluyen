@@ -1,0 +1,16 @@
+@{
+    ViewBag.Title = "Nhập danh sách sinh viên";
+}
+<h2>Nhập danh sách sinh viên từ file Excel</h2>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+<form asp-action="ImportStudents" asp-controller="EnterData" asp-area="Admin" enctype="multipart/form-data" method="post">
+    <div class="form-group">
+        <label>Chọn file Excel (.xlsx):</label>
+        <input type="file" name="file" class="form-control" accept=".xlsx" required />
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Nhập dữ liệu</button>
+</form>
+<p><b>Mẫu file:</b> Username | FullName | Email | ClassName | FacultyName | Password</p>

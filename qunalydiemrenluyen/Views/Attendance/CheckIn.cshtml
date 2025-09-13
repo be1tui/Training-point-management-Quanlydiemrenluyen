@@ -1,0 +1,43 @@
+@{
+    ViewBag.Title = "Điểm danh họp lớp";
+}
+<h2>@ViewBag.Title</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrorMessage
+    </div>
+    <p><a href="@Url.Action("Index", "Home")">Quay lại trang chủ</a></p>
+}
+else if (ViewBag.QRCode != null)
+{
+    <form method="post" id="checkinForm">
+        <input type="hidden" name="qr" value="@ViewBag.QRCode" />
+        <div class="form-group">
+            <label for="studentCodeInput">Mã sinh viên:</label>
+            <input type="text" name="studentCode" class="form-control" required id="studentCodeInput" autofocus />
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Điểm danh</button>
+    </form>
+
+    <script>
+        // Tự động focus vào ô nhập mã sinh viên khi trang load
+        document.getElementById('studentCodeInput').focus();
+
+        // Nếu muốn tự động submit khi nhập xong (ví dụ bấm Enter)
+        document.getElementById('studentCodeInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Ngăn hành vi mặc định của Enter (nếu có)
+                document.getElementById('checkinForm').submit();
+            }
+        });
+    </script>
+}
+else
+{
+    <div class="alert alert-warning" role="alert">
+        Không tìm thấy thông tin mã QR. Vui lòng thử lại.
+    </div>
+    <p><a href="@Url.Action("Index", "Home")">Quay lại trang chủ</a></p>
+}

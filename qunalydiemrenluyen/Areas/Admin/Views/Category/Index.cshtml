@@ -1,0 +1,79 @@
+@model IList<QUANLYDIEMRENLUYEN.Areas.Admin.Models.CriteriaCategory>
+
+@{
+    ViewBag.Title = "Quản lý danh mục & tiêu chí điểm rèn luyện";
+}
+
+<div class="mb-4 d-flex justify-content-end">
+    <a class="btn btn-success waves-effect waves-light" asp-action="AddCategory">
+        <i class="mdi mdi-plus"></i> Thêm danh mục lớn
+    </a>
+</div>
+
+<div class="row g-4">
+    @foreach (var category in Model)
+    {
+        <div class="col-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-body pb-2">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h5 class="fw-bold mb-1 text-primary font-size-16">
+                                <i class="mdi mdi-folder-outline"></i> @category.CategoryName
+                            </h5>
+                            <span class="badge bg-primary mb-2 font-size-13">Điểm tối đa: @category.MaxScore</span>
+                        </div>
+                        <div class="btn-group ms-2">
+                            <a class="btn btn-outline-primary btn-sm" asp-action="EditCategory" asp-route-id="@category.CategoryId" title="Sửa">
+                                <i class="mdi mdi-pencil"></i>
+                            </a>
+                            <form asp-action="DeleteCategory" asp-route-id="@category.CategoryId" method="post" style="display:inline;" onsubmit="return confirm('Xóa danh mục này?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa">
+                                    <i class="mdi mdi-delete"></i>
+                                </button>
+                            </form>
+                            <a class="btn btn-outline-success btn-sm" asp-controller="Criteria" asp-action="AddCriteria" asp-route-categoryId="@category.CategoryId" title="Thêm tiêu chí con">
+                                <i class="mdi mdi-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <hr class="my-2" />
+                    <div>
+                        @if (category.Criterias != null && category.Criterias.Any())
+                        {
+                            var i = 1;
+                            @foreach (var criteria in category.Criterias.OrderBy(c => c.CriteriaId))
+                            {
+                                <div class="d-flex align-items-center py-2 border-bottom font-size-14">
+                                    <div class="flex-grow-1">
+                                        <span class="fw-semibold">@i. @criteria.CriteriaName</span>
+                                    </div>
+                                    <div class="mx-3" style="min-width: 140px;">
+                                        <span class="badge bg-secondary font-size-13">Điểm tối đa: @criteria.MaxScore</span>
+                                    </div>
+                                    <div>
+                                        <div class="btn-group">
+                                            <a class="btn btn-outline-primary btn-sm" asp-controller="Criteria" asp-action="EditCriteria" asp-route-id="@criteria.CriteriaId" title="Sửa">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </a>
+                                            <form asp-controller="Criteria" asp-action="DeleteCriteria" asp-route-id="@criteria.CriteriaId" method="post" style="display:inline;" onsubmit="return confirm('Xóa tiêu chí này?');">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa">
+                                                    <i class="mdi mdi-delete"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-muted fst-italic font-size-13">Chưa có tiêu chí con</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

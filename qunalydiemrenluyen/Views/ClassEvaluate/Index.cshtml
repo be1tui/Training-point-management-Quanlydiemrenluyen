@@ -1,0 +1,87 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.StudentEvaluation>
+@{
+    ViewData["Title"] = "Danh sách sinh viên đã nộp tự đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var academicYears = ViewBag.AcademicYears as List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.AcademicYear>;
+    var semesters = ViewBag.Semesters as List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester>;
+    int? selectedYear = ViewBag.SelectedAcademicYearId as int?;
+    int? selectedSemester = ViewBag.SelectedSemesterId as int?;
+}
+<h2>@ViewData["Title"]</h2>
+ <a href="@Url.Action("Index", "Percentage")" class="btn btn-info">Hiển thị %</a>
+@* <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@ViewData["Title"]</h2>
+    <a href="@Url.Action("Index", "Percentage")" class="btn btn-info">Hiển thị %</a>
+</div *@
+
+<form method="get" asp-action="Index" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="academicYearId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Chọn năm học --</option>
+            @foreach (var year in academicYears)
+            {
+                if (selectedYear == year.AcademicYearId)
+                {
+                    <option value="@year.AcademicYearId" selected="selected">@year.YearName</option>
+                }
+                else
+                {
+                    <option value="@year.AcademicYearId">@year.YearName</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <select name="semesterId" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Chọn học kỳ --</option>
+            @foreach (var sem in semesters)
+            {
+                if (selectedSemester == sem.SemesterId)
+                {
+                    <option value="@sem.SemesterId" selected="selected">@sem.SemesterName</option>
+                }
+                else
+                {
+                    <option value="@sem.SemesterId">@sem.SemesterName</option>
+                }
+            }
+        </select>
+    </div>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Ngày nộp</th>
+            <th>Trạng thái</th>
+            <th><b>Xếp loại</b></th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+    @{
+        int stt = 1;
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>@(stt++)</td>
+                <td>@item.Account?.Username</td>
+                <td>@item.Account?.FullName</td>
+                <td>@item.SubmitDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.Status</td>
+                <td>@item.Note</td> <!-- Hiển thị xếp loại -->
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-action="Detail" asp-route-id="@item.EvaluationId">Chấm điểm</a>
+                </td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>

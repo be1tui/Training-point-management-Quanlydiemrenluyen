@@ -1,0 +1,52 @@
+﻿@model QUANLYDIEMRENLUYEN.Models.Class
+
+@{
+    ViewData["Title"] = "Chỉnh sửa lớp học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-pencil"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="ClassId" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="ClassName" class="form-label">Tên lớp học</label>
+                    <input asp-for="ClassName" class="form-control" placeholder="Nhập tên lớp học" />
+                    <span asp-validation-for="ClassName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Mô tả</label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả chi tiết lớp học"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CreatedAt" class="form-label">Ngày tạo</label>
+                    <input asp-for="CreatedAt" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="mdi mdi-content-save"></i> Lưu
+                    </button>
+                    <a asp-area="Admin" asp-controller="Class" asp-action="Index" class="btn btn-secondary">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại danh sách
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

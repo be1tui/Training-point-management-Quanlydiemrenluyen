@@ -1,0 +1,43 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester>
+
+@{
+    ViewData["Title"] = "Quản lý kỳ học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="pagetitle mb-3">
+    <h4>Quản lý kỳ học</h4>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <a asp-action="Create" class="btn btn-primary mb-3">
+            <i class="mdi mdi-plus"></i> Thêm mới
+        </a>
+
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tên kỳ học</th>
+                    <th>Năm học</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.SemesterName</td>
+                        <td>@item.AcademicYear?.YearName</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.SemesterId" class="btn btn-sm btn-warning"><i class="mdi mdi-pencil"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.SemesterId" class="btn btn-sm btn-info"><i class="mdi mdi-eye"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.SemesterId" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa kỳ học này?');"><i class="mdi mdi-delete"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

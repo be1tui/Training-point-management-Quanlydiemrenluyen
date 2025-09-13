@@ -1,0 +1,145 @@
+@model QUANLYDIEMRENLUYEN.Models.Account
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var profile = ViewBag.Profile as QUANLYDIEMRENLUYEN.Areas.Admin.Models.AccountProfile;
+}
+
+<div class="pagetitle">
+    <h1>Hồ sơ cá nhân</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+            <li class="breadcrumb-item active">Hồ sơ cá nhân</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <ul class="nav nav-tabs mb-3" id="profileTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab" aria-controls="account" aria-selected="true">
+                            Thông tin tài khoản
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab" aria-controls="personal" aria-selected="false">
+                            Thông tin cá nhân
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="class-tab" data-bs-toggle="tab" data-bs-target="#classinfo" type="button" role="tab" aria-controls="classinfo" aria-selected="false">
+                            Thông tin Khoa /Viện /Lớp
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="profileTabContent">
+                    <!-- Tab Thông tin tài khoản -->
+                    <div class="tab-pane fade show active" id="account" role="tabpanel" aria-labelledby="account-tab">
+                        <div class="text-center mb-4">
+                            <img src="@(string.IsNullOrEmpty(Model.Avatar) ? QUANLYDIEMRENLUYEN.Utilities.Functions.AvatarDefault() : Model.Avatar)" 
+                                 alt="Avatar" class="rounded-circle shadow" style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff;">
+                            <h4 class="mt-3 mb-0">@Model.FullName</h4>
+                            <p class="text-muted mb-0">@Model.Username</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Họ và tên:</label>
+                            <div>@Model.FullName</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email:</label>
+                            <div>@Model.Email</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Vai trò:</label>
+                            <div>@Model.Role</div>
+                        </div>
+                    </div>
+                    <!-- Tab Thông tin cá nhân -->
+                    <div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                        <form  asp-action="Editprofile" method="post">
+                            <input type="hidden" name="AccountId" value="@Model.AccountId" />
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Mã sinh viên:</label>
+                                <input class="form-control" value="@Model.Username" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Họ và tên:</label>
+                                <input class="form-control" value="@Model.FullName" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Ngày sinh:</label>
+                                <input type="date" class="form-control" name="DateOfBirth" value="@(profile?.DateOfBirth?.ToString("yyyy-MM-dd") ?? "")" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Giới tính:</label>
+                                <select class="form-select" name="Gender">
+                                    <option value="" selected="@(string.IsNullOrEmpty(profile?.Gender))">-- Chọn giới tính --</option>
+                                    <option value="Nam" selected="@(profile?.Gender == "Nam")">Nam</option>
+                                    <option value="Nữ" selected="@(profile?.Gender == "Nữ")">Nữ</option>
+                                    <option value="Khác" selected="@(profile?.Gender == "Khác")">Khác</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Số điện thoại:</label>
+                                <input class="form-control" name="PhoneNumber" value="@profile?.PhoneNumber" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Địa chỉ:</label>
+                                <input class="form-control" name="Address" value="@profile?.Address" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">CMND/CCCD:</label>
+                                <input class="form-control" name="NationalID" value="@profile?.NationalID" readonly />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Quốc tịch:</label>
+                                <input class="form-control" name="Nationality" value="@profile?.Nationality" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Dân tộc:</label>
+                                <input class="form-control" name="Ethnicity" value="@profile?.Ethnicity" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tôn giáo:</label>
+                                <input class="form-control" name="Religion" value="@profile?.Religion" />
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Lưu thay đổi</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Tab Thông tin lớp quản lý hành chính -->
+                    <div class="tab-pane fade" id="classinfo" role="tabpanel" aria-labelledby="class-tab">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Khoa/Viện:</label>
+                            <div>@Model.Faculty?.FacultyName</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chức vụ SV:</label>
+                            <div>
+                                @(Model.Class?.ClassMonitorId == Model.AccountId ? "Lớp trưởng" : "Sinh viên")
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Lớp hành chính:</label>
+                            <div>@Model.Class?.ClassName</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Khóa đào tạo:</label>
+                            <div>
+                                @if (Model.Class != null)
+                                {
+                                    @Model.Class.CreatedAt.Year
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

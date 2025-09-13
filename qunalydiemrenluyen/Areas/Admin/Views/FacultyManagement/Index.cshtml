@@ -1,0 +1,72 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Models.Account>
+@{
+    ViewBag.Title = "Gán Khoa Viện Lớp cho Sinh Viên";
+    var faculties = ViewBag.Faculties as List<QUANLYDIEMRENLUYEN.Models.Faculty>;
+    var classes = ViewBag.Classes as List<QUANLYDIEMRENLUYEN.Models.Class>;
+    int stt = 1;
+}
+<h2>Gán Khoa Viện Lớp cho Sinh Viên</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên đăng nhập</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Khoa/Viện</th>
+            <th>Lớp</th>
+            <th>Gán Khoa/Viện</th>
+            <th>Gán Lớp</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sv in Model)
+        {
+            <tr>
+                <td>@stt</td>
+                <td>@sv.Username</td>
+                <td>@sv.FullName</td>
+                <td>@sv.Email</td>
+                <td>@(sv.Faculty?.FacultyName ?? "")</td>
+                <td>@(sv.Class?.ClassName ?? "")</td>
+                <td>
+                    <form asp-action="AssignFaculty" method="post" style="display:inline;">
+                        <input type="hidden" name="accountId" value="@sv.AccountId" />
+                        <select name="facultyId" class="form-select form-select-sm" style="width:150px;display:inline-block;">
+                            <option value="">--Chọn khoa/viện--</option>
+                            @if (faculties != null)
+                            {
+                                foreach (var f in faculties)
+                                {
+                                    <option value="@f.FacultyId" selected="@(sv.FacultyId == f.FacultyId ? "selected" : null)">
+                                        @f.FacultyName
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-info">Gán</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="AssignClass" method="post" style="display:inline;">
+                        <input type="hidden" name="accountId" value="@sv.AccountId" />
+                        <select name="classId" class="form-select form-select-sm" style="width:150px;display:inline-block;">
+                            <option value="">--Chọn lớp--</option>
+                            @if (classes != null)
+                            {
+                                foreach (var c in classes)
+                                {
+                                    <option value="@c.ClassId" selected="@(sv.ClassId == c.ClassId ? "selected" : null)">
+                                        @c.ClassName @(c.Faculty != null ? $"({c.Faculty.FacultyName})" : "")
+                                    </option>
+                                }
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-secondary">Gán</button>
+                    </form>
+                </td>
+            </tr>
+            stt++;
+        }
+    </tbody>
+</table>

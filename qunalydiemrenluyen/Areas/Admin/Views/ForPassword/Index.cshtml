@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Quên mật khẩu";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quên mật khẩu</title>
+    <link href="~/admin/assets/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Quên mật khẩu</h2>
+        @if (ViewBag.Message != null)
+        {
+            <div class="alert alert-info">@ViewBag.Message</div>
+        }
+        <form method="post">
+            <div class="mb-3">
+                <label>Email:</label>
+                <input type="email" name="email" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Gửi link đặt lại mật khẩu</button>
+        </form>
+        <a href="/Admin/Login">Quay lại đăng nhập</a>
+    </div>
+</body>
+</html>

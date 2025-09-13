@@ -1,0 +1,97 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.EvaluationDetail>
+@{
+    var evaluation = ViewBag.Evaluation as QUANLYDIEMRENLUYEN.Areas.Admin.Models.StudentEvaluation;
+    var evidences = ViewBag.Evidences as List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Evidence>;
+    var detailsByCategory = Model.GroupBy(d => d.Criteria.Category).ToList();
+    int stt = 1;
+    int totalMaxScore = Model.Sum(d => d.Criteria?.MaxScore ?? 0);
+    int totalClassScore = Model.Sum(d => d.ClassMonitorScore ?? 0);
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<form asp-action="SaveClassScore" method="post">
+    <input type="hidden" name="evaluationId" value="@evaluation?.EvaluationId" />
+    <div class="mb-2">
+        <input type="checkbox" id="fillFullScore" />
+        <label for="fillFullScore" style="cursor:pointer;">Điền full điểm cho tất cả mục lớp đánh giá</label>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>TT</th>
+                <th>Nội dung đánh giá</th>
+                <th>Điểm tối đa</th>
+                <th>SV tự đánh giá</th>
+                <th>Lớp đánh giá</th>
+                <th>Minh chứng</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var catGroup in detailsByCategory)
+        {
+            <tr>
+                <td colspan="6">
+                    <h2>Phiếu đánh giá lớp cho: @evaluation?.Account?.FullName</h2>
+                </td>
+            </tr>
+            <tr class="table-primary">
+                <td colspan="6"><b>@catGroup.Key?.CategoryName</b> (Tổng điểm: @catGroup.Key?.MaxScore)</td>
+            </tr>
+            foreach (var detail in catGroup)
+            {
+                <tr>
+                    <td>@(stt++)</td>
+                    <td>@detail.Criteria?.CriteriaName</td>
+                    <td>@detail.Criteria?.MaxScore</td>
+                    <td>@detail.StudentScore</td>
+                    <td>
+                        <input type="number" 
+                               name="classScores[@detail.CriteriaId]" 
+                               min="0" 
+                               max="@detail.Criteria?.MaxScore" 
+                               value="@detail.ClassMonitorScore" 
+                               class="form-control class-score-input" 
+                               data-max="@detail.Criteria?.MaxScore" 
+                               required />
+                    </td>
+                    <td>
+                        @{
+                            var evidenceList = evidences?.Where(e => e.CriteriaId == detail.CriteriaId).ToList();
+                            if (evidenceList != null && evidenceList.Any())
+                            {
+                                foreach (var ev in evidenceList)
+                                {
+                                    <a href="@Url.Content(ev.FilePath)" target="_blank">Xem minh chứng</a><br />
+                                }
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-end"><b>Tổng điểm tối đa</b></td>
+                <td><b>@totalMaxScore</b></td>
+                <td></td>
+                <td><b>@totalClassScore</b></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    <button type="submit" class="btn btn-success">Lưu điểm & gửi CNK duyệt</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <script>
+        document.getElementById('fillFullScore').addEventListener('change', function () {
+            var checked = this.checked;
+            document.querySelectorAll('.class-score-input').forEach(function (input) {
+                if (checked) {
+                    input.value = input.getAttribute('data-max');
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,163 @@
+@using System.Collections.Generic
+@using QUANLYDIEMRENLUYEN.Areas.Admin.Models
+@using Microsoft.AspNetCore.Http
+@{
+    var role = Context.Session.GetString("Role");
+}
+@model IList<AdminMenu>
+                   <div id="sidebar-menu">
+                        <!-- Left Menu Start -->
+                        <ul class="metismenu list-unstyled" id="side-menu">
+                            <li class="menu-title" key="t-menu">Menu</li>
+                            <li>
+                                <a href="/admin/home" class="waves-effect">
+                                    <i class="bx bx-home-circle"></i>
+                                    <span key="t-home">Trang chủ</span>
+                                </a>
+                            </li>
+
+                            @* @foreach (var item in Model.Where(m => m.ItemLevel == 1).OrderBy(m => m.ItemOrder))
+                            {
+                                var pID = item.AdminMenuID;
+                                var sMenu = Model.Where(p => p.ParentLevel == pID).OrderBy(p => p.ItemOrder).ToList();
+                                <li class="nav-item">
+                                    <a class="nav-link collapsed" data-bs-target="#@item.ItemTarget" data-bs-toggle="collapse" href="#">
+                                        <i class="@item.Icon"></i><span>@item.ItemName</span><i class="bi bi-chevron-down ms-auto"></i>
+                                    </a>
+                                    @if (sMenu != null)
+                                    {
+                                        <ul id="@item.IdName" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+                                            @foreach (var smn in sMenu)
+                                            {
+                                                <li>
+                                                    <a href="/Admin/@smn.ControllerName/@smn.ActionName">
+                                                        <i class="bx-ri-account-box-fill"></i><span>@smn.ItemName</span>
+                                                    </a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </li>
+                            } *@
+
+                            @* <li class="menu-title" key="t-apps">Apps</li> *@
+                            @if (role == "Lecturer")
+                            {
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-task"></i>
+                                    <span key="t-tasks">Quản lý Sinh Viên</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/ListStudent" key="t-task-list">Xem danh sách sinh viên</a></li>
+                                    <li><a href="/Admin/LecturerEvaluate/" key="t-create-task">Phê duyệt hoặc từ chối</a></li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-briefcase-alt-2"></i>
+                                    <span key="t-projects">Quản lý Khoa/Viện</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/DisplayStudent" key="t-p-grid">Thêm sửa xóa DS SV theo lớp/khoa</a></li>
+                                    <li><a href="/Admin/FacultyManagement" key="t-p-list">Gán Khoa Viện Lớp cho Sinh Viên</a></li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bxs-user-detail"></i>
+                                    <span key="t-contacts">Quản lý năm học và học kỳ</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/AcademicYear" key="t-user-grid">Thêm, sửa, xóa năm học, học kỳ</a></li>
+                                    <li><a href="/Admin/EvaluationConfig" key="t-user-list">Cấu hình thời gian tự đánh giá</a></li>
+                                    <li><a href="/Admin/ClassAnnouncement" key="t-user-list">Thông báo họp lớp</a></li>
+                                </ul>
+                            </li>
+                            }
+                            @if (role == "Admin")
+                            {
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-calendar"></i>
+                                    <span key="t-dashboards">Quản lý tài khoản</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/Register" key="t-tui-calendar">Đăng ký tài khoản</a></li>
+                                </ul>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/Account" key="t-tui-calendar">Thêm Sửa Xóa Tài khoản</a></li>
+                                </ul>
+                            </li>
+                            }
+                            @if (role == "Lecturer")
+                            {
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-briefcase-alt-2"></i>
+                                    <span key="t-projects">Quản lý danh mục</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/Category" key="t-p-grid">Thêm, sửa, xóa danh mục</a></li>
+                                </ul>
+                            </li>
+
+                        
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-store"></i>
+                                    <span key="t-ecommerce">Nhập/Xuất dữ liệu</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/Admin/EnterData" key="t-products">Nhập danh sách sinh viên</a></li>
+                                    <li><a href="/Admin/ExportFile" key="t-products">Xuất File điểm rèn luyện</a></li>
+                                </ul>
+                            </li>  
+                            }
+                            @* <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-receipt"></i>
+                                    <span key="t-invoices">Tạo báo cáo</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="invoices-list.html" key="t-invoice-list">Báo cáo điểm rèn luyện</a></li>
+                                </ul>
+                            </li>
+                            
+
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="bx bx-detail"></i>
+                                    <span key="t-blog">Cấu hình hệ thống</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="blog-list.html" key="t-blog-list">Các thiết lập chung</a></li>
+                                    <li><a href="blog-grid.html" key="t-blog-grid">Thông báo</a></li>
+                                    <li><a href="blog-details.html" key="t-blog-details">Thống kê</a></li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a href="javascript: void(0);" class="waves-effect has-arrow">
+                                    <i class="bx bx-briefcase-alt"></i>
+                                    <span key="t-jobs">Jobs</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="job-list.html" key="t-job-list">Job List</a></li>
+                                    <li><a href="job-grid.html" key="t-job-grid">Job Grid</a></li>
+                                    <li><a href="job-apply.html" key="t-apply-job">Apply Job</a></li>
+                                    <li><a href="job-details.html" key="t-job-details">Job Details</a></li>
+                                    <li><a href="job-categories.html" key="t-Jobs-categories">Jobs Categories</a></li>
+                                    <li>
+                                        <a href="javascript: void(0);" class="has-arrow" key="t-candidate">Candidate</a>
+                                        <ul class="sub-menu" aria-expanded="true">
+                                            <li><a href="candidate-list.html" key="t-list">List</a></li>
+                                            <li><a href="candidate-overview.html" key="t-overview">Overview</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li> *@
+                        </ul>
+                    </div>

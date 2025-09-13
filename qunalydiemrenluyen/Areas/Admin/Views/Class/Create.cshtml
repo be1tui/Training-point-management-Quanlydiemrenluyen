@@ -1,0 +1,45 @@
+﻿@model QUANLYDIEMRENLUYEN.Models.Class
+
+@{
+    ViewData["Title"] = "Tạo lớp học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main id="main" class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-plus-box-outline"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ClassName" class="form-label">Tên lớp học</label>
+                        <input asp-for="ClassName" class="form-control" placeholder="Nhập tên lớp..." />
+                        <span asp-validation-for="ClassName" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" placeholder="Nhập mô tả..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-warning">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-content-save"></i> Thêm mới
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

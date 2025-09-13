@@ -1,0 +1,46 @@
+﻿@model QUANLYDIEMRENLUYEN.Models.Account
+
+@{
+    ViewData["Title"] = "Xóa tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4 class="fw-bold text-danger">
+            <i class="mdi mdi-alert-circle-outline"></i> Xóa tài khoản
+        </h4>
+    </div>
+
+    <div class="alert alert-warning" role="alert">
+        <i class="mdi mdi-alert"></i>
+        Bạn có chắc chắn muốn <strong>xóa vĩnh viễn</strong> tài khoản này không? Hành động này không thể hoàn tác!
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Mã tài khoản</label>
+                    <input type="text" class="form-control" value="@Model.AccountId" disabled />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên đăng nhập</label>
+                    <input type="text" class="form-control" value="@Model.Username" disabled />
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="AccountId" />
+                <div class="d-flex justify-content-between">
+                    <a class="btn btn-outline-secondary" href="javascript:history.back()">
+                        <i class="mdi mdi-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="mdi mdi-delete-forever"></i> Xác nhận xóa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,87 @@
+﻿@model QUANLYDIEMRENLUYEN.Models.Class
+
+@{
+    ViewData["Title"] = "Xóa lớp học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-delete-forever-outline"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <h5 class="text-danger mb-3">
+                Bạn có chắc chắn muốn xóa lớp <strong>@Model.ClassName</strong> không?
+            </h5>
+
+            @if (Model.Accounts != null && Model.Accounts.Any())
+            {
+                <div class="alert alert-warning">
+                    <strong><i class="mdi mdi-alert-circle-outline"></i> Cảnh báo:</strong>
+                    Lớp này hiện đang chứa <strong>@Model.Accounts.Count()</strong> tài khoản sinh viên.
+                    <br />
+                    Nếu bạn tiếp tục, <strong>toàn bộ sinh viên trong lớp này sẽ bị xóa</strong>. Hành động này không thể hoàn tác.
+                </div>
+
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tên đăng nhập</th>
+                                <th>Họ tên</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var account in Model.Accounts)
+                            {
+                                <tr>
+                                    <td>@account.Username</td>
+                                    <td>@account.FullName</td>
+                                    <td>@account.Email</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <form asp-action="Delete" method="post" class="mt-4">
+                    <input type="hidden" asp-for="ClassId" />
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-warning">
+                            <i class="mdi mdi-arrow-left"></i> Hủy
+                        </a>
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa lớp học này và toàn bộ sinh viên trong lớp không?');">
+                            <i class="mdi mdi-delete"></i> Xác nhận xóa
+                        </button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="ClassId" />
+
+                    <div class="alert alert-success">
+                        Lớp này không chứa tài khoản sinh viên nào. Bạn có thể xóa an toàn.
+                    </div>
+
+                    <div class="mt-3 d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-warning">
+                            <i class="mdi mdi-arrow-left"></i> Hủy
+                        </a>
+                        <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa lớp học này không?');">
+                            <i class="mdi mdi-delete"></i> Xác nhận xóa
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</main>

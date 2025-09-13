@@ -1,0 +1,88 @@
+@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.ExportFileViewModel
+@{
+    ViewData["Title"] = "Xuất dữ liệu điểm rèn luyện";
+}
+
+<h2>Xuất dữ liệu điểm rèn luyện</h2>
+
+<form asp-action="Index" method="get">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label>Năm học</label>
+            <select asp-for="AcademicYearId" asp-items="Model.AcademicYears" class="form-control">
+                <option value="">-- Chọn năm học --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Học kỳ</label>
+            <select asp-for="SemesterId" asp-items="Model.Semesters" class="form-control">
+                <option value="">-- Chọn học kỳ --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Khoa</label>
+            <select asp-for="FacultyId" asp-items="Model.Faculties" class="form-control">
+                <option value="">-- Chọn khoa --</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label>Lớp</label>
+            <select asp-for="ClassId" asp-items="Model.Classes" class="form-control">
+                <option value="">-- Chọn lớp --</option>
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Lọc</button>
+</form>
+
+@if (
+    Model.Students != null && Model.Students.Count > 0
+    && Model.AcademicYearId.HasValue
+    && Model.SemesterId.HasValue
+    && Model.FacultyId.HasValue
+    && Model.ClassId.HasValue
+)
+{
+    <h4>Danh sách sinh viên</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Mã SV</th>
+                <th>Họ tên</th>
+                <th>Lớp</th>
+                <th>Khoa</th>
+                <th>Năm học</th>
+                <th>Học kỳ</th>
+                <th>Tổng điểm</th>
+                <th>Xếp loại</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Students.Count; i++)
+            {
+                var item = Model.Students[i];
+                <tr>
+                    <td>@(i + 1)</td>
+                    <td>@item.Account?.Username</td>
+                    <td>@item.Account?.FullName</td>
+                    <td>@item.Account?.Class?.ClassName</td>
+                    <td>@item.Account?.Faculty?.FacultyName</td>
+                    <td>@item.Semester?.AcademicYear?.YearName</td>
+                    <td>@item.Semester?.SemesterName</td>
+                    <td>@item.TotalScore</td>
+                    <td>@item.Rank</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <form asp-action="Export" method="post">
+        <input type="hidden" asp-for="AcademicYearId" />
+        <input type="hidden" asp-for="SemesterId" />
+        <input type="hidden" asp-for="FacultyId" />
+        <input type="hidden" asp-for="ClassId" />
+        <button type="submit" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+        </button>
+    </form>
+}

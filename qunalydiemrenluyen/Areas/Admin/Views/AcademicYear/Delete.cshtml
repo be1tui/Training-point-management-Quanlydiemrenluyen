@@ -1,0 +1,56 @@
+﻿@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.AcademicYear
+
+@{
+    ViewData["Title"] = "Xóa năm học";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-delete-forever-outline"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <h5 class="text-danger mb-3">
+                Bạn có chắc chắn muốn xóa năm học <strong>@Model.YearName</strong> không?
+            </h5>
+
+            @if (ViewBag.RelatedSemesters != null && ((IEnumerable<string>)ViewBag.RelatedSemesters).Any())
+            {
+                <div class="alert alert-warning">
+                    <strong><i class="mdi mdi-alert-circle-outline"></i> Cảnh báo:</strong>
+                    Năm học này đang chứa các học kỳ sau:
+                    <ul class="mb-0 mt-2">
+                        @foreach (var semester in (IEnumerable<string>)ViewBag.RelatedSemesters)
+                        {
+                            <li>@semester</li>
+                        }
+                    </ul>
+                    <div class="mt-3">
+                        Việc xóa sẽ <strong>xóa toàn bộ học kỳ liên quan</strong>. Hành động này không thể hoàn tác.
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    Năm học này không chứa học kỳ nào. Bạn có thể xóa an toàn.
+                </div>
+            }
+
+            <form asp-action="Delete" asp-route-id="@Model.AcademicYearId" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="AcademicYearId" />
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="mdi mdi-arrow-left"></i> Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa năm học này và toàn bộ học kỳ liên quan không?');">
+                        <i class="mdi mdi-delete"></i> Xác nhận xóa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>

@@ -1,0 +1,39 @@
+﻿@model QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester
+
+@{
+    ViewData["Title"] = "Xóa học kỳ";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<main class="main">
+    <div class="pagetitle mb-3">
+        <h4><i class="mdi mdi-delete-forever-outline"></i> @ViewData["Title"]</h4>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <h5 class="text-danger mb-3">
+                Bạn có chắc chắn muốn xóa học kỳ <strong>@Model.SemesterName</strong> không?
+            </h5>
+
+            <form asp-action="Delete" asp-route-id="@Model.SemesterId" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="SemesterId" />
+                <div class="alert alert-success">
+                    Bạn có thể xóa học kỳ này nếu không liên kết dữ liệu khác.
+                </div>
+
+                <div class="mt-3 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-warning">
+                        <i class="mdi mdi-arrow-left"></i> Hủy
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="mdi mdi-delete"></i> Xác nhận xóa
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</main>

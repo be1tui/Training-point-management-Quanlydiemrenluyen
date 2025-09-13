@@ -1,0 +1,96 @@
+@model IList<QUANLYDIEMRENLUYEN.Areas.Admin.Models.CriteriaCategory>
+@{
+    ViewData["Title"] = "Phiếu tự đánh giá điểm rèn luyện";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int stt = 1;
+    int totalMaxScore = Model.Sum(cat => cat.Criterias?.Sum(c => c.MaxScore) ?? 0);
+    var submitted = ViewBag.Submitted as bool? ?? false;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}
+
+@if (!submitted)
+{
+    <form asp-action="Submit" asp-controller="Evaluate" enctype="multipart/form-data" method="post">
+        <input type="hidden" name="semesterId" value="@ViewBag.SemesterId" />
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>TT</th>
+                    <th>Nội dung đánh giá</th>
+                    <th>Điểm tối đa</th>
+                    <th>SV tự đánh giá</th>
+                    <th>Lớp đánh giá</th>
+                    <th>Minh chứng</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var category in Model)
+            {
+                <tr class="table-primary">
+                    <td colspan="6"><b>@category.CategoryName</b> (Tổng điểm: @category.MaxScore)</td>
+                </tr>
+                if (category.Criterias != null)
+                {
+                    foreach (var criteria in category.Criterias)
+                    {
+                        <tr>
+                            <td>@(stt++)</td>
+                            <td>@criteria.CriteriaName</td>
+                            <td>@criteria.MaxScore</td>
+                            <td>
+                                <input type="number" name="scores[@criteria.CriteriaId]" min="0" max="@criteria.MaxScore" class="form-control" required />
+                            </td>
+                            <td>
+                                <input type="number" class="form-control" readonly />
+                            </td>
+                            <td>
+                                @if (criteria.RequiresEvidence)
+                                {
+                                    <input type="file" name="EvidenceFiles[@criteria.CriteriaId]" accept="image/*,.pdf,.doc,.docx" class="form-control evidence-input" data-criteria-id="@criteria.CriteriaId" />
+                                    <span class="evidence-path" id="evidence-path-@criteria.CriteriaId"></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="text-end"><b>Tổng điểm tối đa</b></td>
+                    <td><b>@totalMaxScore</b></td>
+                    <td colspan="3"></td>
+                </tr>
+            </tfoot>
+        </table>
+        <button type="submit" class="btn btn-primary">Nộp phiếu tự đánh giá</button>
+    </form>
+}
+else
+{
+    <div class="alert alert-success">Bạn đã nộp bản tự đánh giá cho học kỳ này.</div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.evidence-input').forEach(function (input) {
+                input.addEventListener('change', function (e) {
+                    var criteriaId = this.getAttribute('data-criteria-id');
+                    var span = document.getElementById('evidence-path-' + criteriaId);
+                    if (this.files && this.files.length > 0) {
+                        span.textContent = 'Đã chọn: ' + this.files[0].name;
+                    } else {
+                        span.textContent = '';
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,94 @@
+@model Tuple<IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.AcademicYear>, IEnumerable<QUANLYDIEMRENLUYEN.Areas.Admin.Models.Semester>>
+
+@{
+    ViewData["Title"] = "Quản lý năm học và học kỳ";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row">
+    <!-- Bảng năm học -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Năm học</h5>
+                <a href="/Admin/AcademicYear/Create" class="btn btn-primary btn-sm">
+                    <i class="mdi mdi-plus-circle-outline"></i> Thêm năm học
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tên năm học</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Item1)
+                            {
+                                <tr>
+                                    <td>@item.YearName</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="/Admin/AcademicYear/Edit/@item.AcademicYearId" class="btn btn-warning btn-sm" title="Sửa"><i class="mdi mdi-pencil"></i></a>
+                                            <a href="/Admin/AcademicYear/Details/@item.AcademicYearId" class="btn btn-info btn-sm" title="Chi tiết"><i class="mdi mdi-eye"></i></a>
+                                            <a href="/Admin/AcademicYear/Delete/@item.AcademicYearId" class="btn btn-danger btn-sm" title="Xóa"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa năm học này?');">
+                                                <i class="mdi mdi-delete"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bảng học kỳ -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Học kỳ</h5>
+                <a href="/Admin/Semester/Create" class="btn btn-primary btn-sm">
+                    <i class="mdi mdi-plus-circle-outline"></i> Thêm học kỳ
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Tên học kỳ</th>
+                                <th>Năm học</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Item2)
+                            {
+                                <tr>
+                                    <td>@item.SemesterName</td>
+                                    <td>@item.AcademicYear?.YearName</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="/Admin/Semester/Edit/@item.SemesterId" class="btn btn-warning btn-sm"><i class="mdi mdi-pencil"></i></a>
+                                            <a href="/Admin/Semester/Details/@item.SemesterId" class="btn btn-info btn-sm"><i class="mdi mdi-eye"></i></a>
+                                            <a href="/Admin/Semester/Delete/@item.SemesterId" class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa học kỳ này?');">
+                                                <i class="mdi mdi-delete"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

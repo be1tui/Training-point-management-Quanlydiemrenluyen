@@ -1,0 +1,23 @@
+@{
+    ViewBag.Title = "Tạo mã QR điểm danh";
+    int timeout = 60; // số giây hết hạn QR
+}
+<h2>@ViewBag.Title</h2>
+<p>Mã QR sẽ hết hạn lúc: <b>@ViewBag.Expiry.ToString("HH:mm:ss")</b></p>
+<img src="@ViewBag.QRImage" alt="QR Code" />
+<p>Sau <span id="countdown">@timeout</span> giây sẽ tự động chuyển sang danh sách sinh viên đã điểm danh.</p>
+<a id="listLink" href="@Url.Action("List", "Attendance", new { attendanceId = ViewBag.AttendanceId })">Xem danh sách sinh viên đã điểm danh</a>
+
+<script>
+    let seconds = @timeout;
+    let countdown = document.getElementById('countdown');
+    let link = document.getElementById('listLink').href;
+    let timer = setInterval(function() {
+        seconds--;
+        countdown.innerText = seconds;
+        if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = link;
+        }
+    }, 1000);
+</script>

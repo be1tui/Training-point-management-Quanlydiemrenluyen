@@ -1,0 +1,57 @@
+@model IEnumerable<QUANLYDIEMRENLUYEN.Models.Account>
+@{
+    ViewBag.Title = "Danh sách sinh viên";
+    var classes = ViewBag.Classes as List<QUANLYDIEMRENLUYEN.Models.Class>;
+    var faculties = ViewBag.Faculties as List<QUANLYDIEMRENLUYEN.Models.Faculty>;
+}
+<h2>Danh sách sinh viên</h2>
+
+<form method="get" asp-action="Index">
+    <select name="facultyId">
+        <option value="">--Chọn Khoa--</option>
+        @foreach (var f in faculties ?? new List<QUANLYDIEMRENLUYEN.Models.Faculty>())
+        {
+            <option value="@f.FacultyId">@f.FacultyName</option>
+        }
+    </select>
+    <select name="classId">
+        <option value="">--Chọn Lớp--</option>
+        @foreach (var c in classes ?? new List<QUANLYDIEMRENLUYEN.Models.Class>())
+        {
+            <option value="@c.ClassId">@c.ClassName</option>
+        }
+    </select>
+    <button type="submit">Lọc</button>
+    <a class="btn btn-success" asp-action="AddStudent">Thêm sinh viên</a>
+</form>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Mã SV</th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Lớp</th>
+            <th>Khoa</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sv in Model)
+        {
+            <tr>
+                <td>@sv.Username</td>
+                <td>@sv.FullName</td>
+                <td>@sv.Email</td>
+                <td>@sv.Class?.ClassName</td>
+                <td>@sv.Faculty?.FacultyName</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-action="EditStudent" asp-route-id="@sv.AccountId">Sửa</a>
+                    <form asp-action="DeleteStudent" asp-route-id="@sv.AccountId" method="post" style="display:inline" onsubmit="return confirm('Xác nhận xóa?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

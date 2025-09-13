@@ -1,0 +1,195 @@
+@{
+    Layout = null; // Bỏ layout mặc định
+}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Register | HOCTAPTRUCTUYEN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <link rel="shortcut icon" href="~/admin/assets/images/favicon.ico">
+    <link href="~/admin/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+    <link href="~/admin/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/admin/assets/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+    <script src="~/admin/assets/js/plugin.js"></script>
+</head>
+
+<body>
+
+    <div class="account-pages my-5 pt-sm-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6 col-xl-5">
+                    <div class="card overflow-hidden">
+                        <div class="bg-primary-subtle">
+                            <div class="row">
+                                <div class="col-7">
+                                    <div class="text-primary p-4">
+                                        <h5 class="text-primary">Register</h5>
+                                        <p>Get your HOCTAPTRUCTUYEN account now.</p>
+                                    </div>
+                                </div>
+                                <div class="col-5 align-self-end">
+                                    <img src="~/admin/assets/images/profile-img.png" alt="" class="img-fluid">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body pt-0">
+                            <div>
+                                <a href="index.html">
+                                    <div class="avatar-md profile-user-wid mb-4">
+                                        <span class="avatar-title rounded-circle bg-light">
+                                            <img src="~/admin/assets/images/logo.svg" alt="" class="rounded-circle" height="34">
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="p-2">
+                                <form asp-action="Register" method="post" class="needs-validation" novalidate>
+                                    <!-- Display error message if exists -->
+                                    @if (TempData["Message"] != null)
+                                    {
+                                        <div class="alert alert-danger">
+                                            @TempData["Message"]
+                                        </div>
+                                    }
+
+                                    <!-- Fullname -->
+                                    <div class="mb-3">
+                                        <label for="fullname" class="form-label">Họ và tên</label>
+                                        <input type="text" class="form-control" id="fullname" name="Fullname" placeholder="Nhập họ và tên" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập họ và tên
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3" id="username-group">
+                                        <label for="username" class="form-label">Mã sinh viên</label>
+                                        <input type="text" class="form-control" id="username" name="Username" placeholder="Nhập mã sinh viên">
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập mã sinh viên
+                                        </div>
+                                    </div>
+                                    <div class="mb-3" id="email-group" style="display:none;">
+                                        <label for="useremail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="useremail" name="Email" placeholder="Nhập email" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập email
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="userpassword" class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="userpassword" name="Password" placeholder="Enter password" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập Password
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3"
+                                        <label for="confirmpassword" class="form-label">Nhập lại mật khẩu</label>
+                                        <input type="password" class="form-control" id="confirmpassword" name="ConfirmPassword" placeholder="Nhập lại mật khẩu" required>
+                                        <div class="invalid-feedback">
+                                            Vui lòng nhập lại Password
+                                        </div>
+                                    </div>
+
+                                    <!-- ✅ Thêm lựa chọn loại tài khoản -->
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Chọn loại tài khoản</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="Role" id="studentRole" value="Student" required>
+                                            <label class="form-check-label" for="studentRole">Sinh viên</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="Role" id="classMonitorRole" value="Classmonitor" required>
+                                            <label class="form-check-label" for="classMonitorRole">Lớp trưởng</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="Role" id="teacherRole" value="Lecturer" required>
+                                            <label class="form-check-label" for="teacherRole">Giáo viên</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="Role" id="adminRole" value="Admin" required>
+                                            <label class="form-check-label" for="adminRole">Admin</label>
+                                        </div>
+                                        <div class="invalid-feedback d-block">
+                                            Vui lòng chọn loại tài khoản
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 d-grid">
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit">Register</button>
+                                    </div>
+
+                                    <div class="mt-4 text-center">
+                                        <h5 class="font-size-14 mb-3">Sign up using</h5>
+                                        <ul class="list-inline">
+                                            <li class="list-inline-item">
+                                                <a href="javascript::void()" class="social-list-item bg-primary text-white border-primary">
+                                                    <i class="mdi mdi-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript::void()" class="social-list-item bg-info text-white border-info">
+                                                    <i class="mdi mdi-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <a href="javascript::void()" class="social-list-item bg-danger text-white border-danger">
+                                                    <i class="mdi mdi-google"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="mt-4 text-center">
+                                        <p class="mb-0">Already have an account? <a href="/Admin/Login" class="text-primary">Login</a></p>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-5 text-center">
+                        <p>© <script>document.write(new Date().getFullYear())</script> HOCTAPTRUCTUYEN</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="~/admin/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/admin/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/admin/assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="~/admin/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/admin/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/admin/assets/js/pages/validation.init.js"></script>
+    <script src="~/admin/assets/js/app.js"></script>
+    <script>
+        function toggleFields() {
+            var role = $('input[name="Role"]:checked').val();
+            if (role === "Student" || role === "Classmonitor") {
+                $("#username-group").show();
+                $("#email-group").show(); // Luôn hiển thị Email
+                $("#username").prop("required", true);
+                $("#useremail").prop("required", true); // Email bắt buộc
+            } else {
+                $("#username-group").hide();
+                $("#email-group").show();
+                $("#username").prop("required", false);
+                $("#useremail").prop("required", true);
+            }
+        }
+        $(document).ready(function () {
+            $('input[name="Role"]').change(toggleFields);
+            toggleFields(); // Gọi khi load lại trang
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+@model List<QUANLYDIEMRENLUYEN.Areas.Admin.Models.AttendanceRecord>
+@{
+    ViewBag.Title = "Danh sách sinh viên đã điểm danh";
+}
+<h2>@ViewBag.Title</h2>
+<table class="table">
+    <tr>
+        <th>STT</th>
+        <th>Mã SV</th>
+        <th>Họ tên</th>
+        <th>Thời gian điểm danh</th>
+    </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <tr>
+            <td>@(i+1)</td>
+            <td>@Model[i].Student?.Username</td>
+            <td>@Model[i].Student?.FullName</td>
+            <td>@Model[i].CheckInTime.ToString("HH:mm:ss dd/MM/yyyy")</td>
+        </tr>
+    }
+</table>
